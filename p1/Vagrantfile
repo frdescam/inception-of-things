@@ -4,4 +4,27 @@
 Vagrant.configure("2") do |config|
   # Use centos 8
   config.vm.box = "centos/8"
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 512
+    v.cpus = 1
+  end
+
+  # Create the frdescamS vm
+  config.vm.define "frdescamS" do |master|
+    master.vm.hostname = "frdescamS"
+    # You may need to add a /etc/vbox/networks.conf file containing
+    # '* 0.0.0.0/0 ::/0' on your host system for this line to work properly
+    # idk why, will check later
+    master.vm.network "private_network", ip: "192.168.42.110"
+  end
+
+  # Create the frdescamSW vm
+  config.vm.define "frdescamSW" do |worker|
+    worker.vm.hostname = "frdescamSW"
+    # You may need to add a /etc/vbox/networks.conf file containing
+    # '* 0.0.0.0/0 ::/0' on your host system for this line to work properly
+    # idk why, will check later
+    worker.vm.network "private_network", ip: "192.168.42.111"
+  end
 end
