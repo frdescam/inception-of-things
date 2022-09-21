@@ -1,0 +1,7 @@
+# vi: set ft=ruby :
+
+# Use vagrant v2
+Vagrant.configure("2") do |config|
+  # Use centos 8
+  config.vm.box = "centos/8"
+end
