@@ -9,23 +9,29 @@ Vagrant.configure("2") do |config|
     v.memory = 512
     v.cpus = 1
   end
+  # Setup shared folder between host and VMs
   config.vm.synced_folder "./shared", "/vagrant"
 
+  # This is triggered before both VMs are started which is useless
+  # Copy ssh key before starting
   config.trigger.before :up do |trigger|
     trigger.run = { inline: <<-SHELL
-      if [ ! -f "~/.ssh/id_rsa" ]
-      then
-        ssh-keyken -f ~/.ssh/id_rsa -N ""
-      cp ~/.ssh/id_rsa.pub ./shared
+      bash -c "
+        if [ ! -f ~/.ssh/id_rsa ]
+        then
+          ssh-keyken -f ~/.ssh/id_rsa -N ''
+        fi
+        cp ~/.ssh/id_rsa.pub ./shared
+      "
       SHELL
     }
   end
+
   # Create the ltouretS VM
   config.vm.define "ltouretS" do |master|
     master.vm.hostname = "ltouretS"
     # You may need to add a /etc/vbox/networks.conf file containing
     # '* 0.0.0.0/0 ::/0' on your host system for this line to work properly
-    # idk why, will check later
     master.vm.network :private_network, ip: "192.168.42.110"
     # Run at VM creation the K3s installation script in controller mode
     master.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["controller"]
@@ -39,8 +45,5 @@ Vagrant.configure("2") do |config|
     worker.vm.network :private_network, ip: "192.168.42.111"
     # Run at VM creation the K3s installation script in agent mode
     worker.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["agent", "192.168.42.110"]
-  end
-  config.trigger.after :up do |trigger|
-    trigger.run = {inline: "rm ./shared/id_rsa.pub"}
   end
 end
