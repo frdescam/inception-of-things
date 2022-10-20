@@ -2,29 +2,33 @@
 
 # Use vagrant v2
 Vagrant.configure("2") do |config|
-  # Use centos 8
-  config.vm.box = "centos/8"
-
+  # Use alpine 3.16
+  config.vm.box = "generic/alpine316"
+  # limit resources access
   config.vm.provider "virtualbox" do |v|
     v.memory = 512
     v.cpus = 1
   end
+  config.vm.synced_folder ".", "/vagrant"
 
-  # Create the frdescamS vm
-  config.vm.define "frdescamS" do |master|
-    master.vm.hostname = "frdescamS"
+  # Create the ltouretS VM
+  config.vm.define "ltouretS" do |master|
+    master.vm.hostname = "ltouretS"
     # You may need to add a /etc/vbox/networks.conf file containing
     # '* 0.0.0.0/0 ::/0' on your host system for this line to work properly
     # idk why, will check later
-    master.vm.network "private_network", ip: "192.168.42.110"
+    master.vm.network :private_network, ip: "192.168.42.110"
+    # Run at VM creation the K3s installation script in controller mode
+    master.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["controller"]
   end
 
-  # Create the frdescamSW vm
-  config.vm.define "frdescamSW" do |worker|
-    worker.vm.hostname = "frdescamSW"
+  # Create the ltouretSW VM
+  config.vm.define "ltouretSW" do |worker|
+    worker.vm.hostname = "ltouretSW"
     # You may need to add a /etc/vbox/networks.conf file containing
     # '* 0.0.0.0/0 ::/0' on your host system for this line to work properly
-    # idk why, will check later
-    worker.vm.network "private_network", ip: "192.168.42.111"
+    worker.vm.network :private_network, ip: "192.168.42.111"
+    # Run at VM creation the K3s installation script in agent mode
+    worker.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["agent", "192.168.42.110"]
   end
 end
