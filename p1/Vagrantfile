@@ -1,4 +1,22 @@
 # vi: set ft=ruby :
+#
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Vagrantfile                                        :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: frdescam <marvin@42.fr                     +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2022/09/21 19:41:41 by frdescam          #+#    #+#              #
+#    Updated: 2022/10/21 19:44:08 by frdescam         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+SERVER_IP = "192.168.42.110"
+WORKER_IP = "192.168.42.111"
+
+SERVER_HOSTNAME = "ltouretS"
+WORKER_HOSTNAME = "ltouretSW"
 
 # Use vagrant v2
 Vagrant.configure("2") do |config|
@@ -12,38 +30,37 @@ Vagrant.configure("2") do |config|
   # Setup shared folder between host and VMs
   config.vm.synced_folder "./shared", "/vagrant"
 
-  # This is triggered before both VMs are started which is useless
-  # Copy ssh key before starting
-  config.trigger.before :up do |trigger|
-    trigger.run = { inline: <<-SHELL
-      bash -c "
-        if [ ! -f ~/.ssh/id_rsa ]
-        then
-          ssh-keyken -f ~/.ssh/id_rsa -N ''
-        fi
-        cp ~/.ssh/id_rsa.pub ./shared
-      "
-      SHELL
-    }
-  end
-
-  # Create the ltouretS VM
-  config.vm.define "ltouretS" do |master|
-    master.vm.hostname = "ltouretS"
+  # Create the server VM
+  config.vm.define SERVER_HOSTNAME do |master|
+    master.vm.hostname = SERVER_HOSTNAME
     # You may need to add a /etc/vbox/networks.conf file containing
     # '* 0.0.0.0/0 ::/0' on your host system for this line to work properly
-    master.vm.network :private_network, ip: "192.168.42.110"
+    master.vm.network :private_network, ip: SERVER_IP
     # Run at VM creation the K3s installation script in controller mode
     master.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["controller"]
+
+    # Copy ssh key before starting VMs
+    master.trigger.before :up do |trigger|
+      trigger.run = { inline: <<-SHELL
+        bash -c "
+          if [ ! -f ~/.ssh/id_rsa ]
+          then
+            ssh-keyken -f ~/.ssh/id_rsa -N ''
+          fi
+          cp ~/.ssh/id_rsa.pub ./shared
+        "
+        SHELL
+      }
+    end
   end
 
-  # Create the ltouretSW VM
-  config.vm.define "ltouretSW" do |worker|
-    worker.vm.hostname = "ltouretSW"
+  # Create the worker VM
+  config.vm.define WORKER_HOSTNAME do |worker|
+    worker.vm.hostname = WORKER_HOSTNAME
     # You may need to add a /etc/vbox/networks.conf file containing
     # '* 0.0.0.0/0 ::/0' on your host system for this line to work properly
-    worker.vm.network :private_network, ip: "192.168.42.111"
+    worker.vm.network :private_network, ip: WORKER_IP
     # Run at VM creation the K3s installation script in agent mode
-    worker.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["agent", "192.168.42.110"]
+    worker.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["agent", SERVER_IP]
   end
 end
