@@ -12,8 +12,8 @@
 #                                                                              #
 # **************************************************************************** #
 
-SERVER_IP = "192.168.42.110"
-WORKER_IP = "192.168.42.111"
+SERVER_IP = "192.168.56.110"
+WORKER_IP = "192.168.56.111"
 
 SERVER_HOSTNAME = "ltouretS"
 WORKER_HOSTNAME = "ltouretSW"
@@ -33,8 +33,6 @@ Vagrant.configure("2") do |config|
   # Create the server VM
   config.vm.define SERVER_HOSTNAME do |master|
     master.vm.hostname = SERVER_HOSTNAME
-    # You may need to add a /etc/vbox/networks.conf file containing
-    # '* 0.0.0.0/0 ::/0' on your host system for this line to work properly
     master.vm.network :private_network, ip: SERVER_IP
     # Run at VM creation the K3s installation script in controller mode
     master.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["controller"]
@@ -57,8 +55,6 @@ Vagrant.configure("2") do |config|
   # Create the worker VM
   config.vm.define WORKER_HOSTNAME do |worker|
     worker.vm.hostname = WORKER_HOSTNAME
-    # You may need to add a /etc/vbox/networks.conf file containing
-    # '* 0.0.0.0/0 ::/0' on your host system for this line to work properly
     worker.vm.network :private_network, ip: WORKER_IP
     # Run at VM creation the K3s installation script in agent mode
     worker.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["agent", SERVER_IP]
