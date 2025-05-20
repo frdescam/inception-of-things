@@ -21,14 +21,17 @@ WORKER_HOSTNAME = "ltouretSW"
 # Use vagrant v2
 Vagrant.configure("2") do |config|
   # Use alpine 3.16
-  config.vm.box = "generic/alpine316"
+  config.vm.box = "generic/alpine318"
   # limit resources access
   config.vm.provider "virtualbox" do |v|
-    v.memory = 512
+    v.memory = 1024
     v.cpus = 1
   end
   # Setup shared folder between host and VMs
   config.vm.synced_folder "./shared", "/vagrant"
+
+  # We insert our own ssh key so no need for theirs
+  config.ssh.insert_key = false
 
   # Create the server VM
   config.vm.define SERVER_HOSTNAME do |master|
@@ -41,11 +44,11 @@ Vagrant.configure("2") do |config|
     master.trigger.before :up do |trigger|
       trigger.run = { inline: <<-SHELL
         bash -c "
-          if [ ! -f ~/.ssh/id_rsa ]
+          if [ ! -f ~/.ssh/id_ed25519 ]
           then
-            ssh-keygen -f ~/.ssh/id_rsa -N ''
+            ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ''
           fi
-          cp ~/.ssh/id_rsa.pub ./shared
+          cp ~/.ssh/id_ed25519.pub ./shared
         "
         SHELL
       }

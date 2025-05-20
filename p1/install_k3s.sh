@@ -24,14 +24,13 @@ then
 	echo "[provisioned script] Copying node-token to shared folder ..."
 	cp /var/lib/rancher/k3s/server/node-token /vagrant/
 	echo "[provisioned script] Authorizating ssh key ..."
-	cat /vagrant/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+	cat /vagrant/id_ed25519.pub >> /home/vagrant/.ssh/authorized_keys
 else
 	echo "[provisioned script] Starting installation in agent mode ..."
 	curl -sfL https://get.k3s.io | \
 		K3S_TOKEN=$(cat /vagrant/node-token) K3S_URL=https://$2:6443 sh -
 	echo "[provisioned script] Authorizating ssh key ..."
-	cat /vagrant/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
-
+	cat /vagrant/id_ed25519.pub >> /home/vagrant/.ssh/authorized_keys
 	echo "[provisioned script] Removing files from shared folder ..."
-	rm /vagrant/id_rsa.pub /vagrant/node-token
+	rm /vagrant/id_ed25519.pub /vagrant/node-token
 fi
