@@ -39,7 +39,7 @@ else
 		sh -
 
 	echo "[k3s installation script] Removing files from shared folder ..."
-	rm /vagrant/id_ed25519.pub /vagrant/node-token
+	rm /vagrant/node-token
 fi
 
 # This shouldn't be here, it has nothing to do with k3s installation
