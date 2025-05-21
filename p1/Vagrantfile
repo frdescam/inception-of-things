@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
     master.trigger.before :up do |trigger|
       trigger.run = { inline: <<-SHELL
         bash -c "
-          if [ ! -f ~/.ssh/id_ed25519 ]
+          if [ ! -f ~/.ssh/id_ed25519.pub ] || [ ! -f ~/.ssh/id_ed25519 ]
           then
             ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ''
           fi
