@@ -15,6 +15,7 @@ Vagrant.configure("2") do |config|
   end
   # Setup shared folder between host and VMs
   config.vm.synced_folder "./shared", "/vagrant"
+  config.vm.synced_folder "./services", "/services"
 
   # We insert our own ssh key so no need for theirs
   config.ssh.insert_key = false
@@ -24,9 +25,13 @@ Vagrant.configure("2") do |config|
     master.vm.hostname = CONTROLLER_HOSTNAME
     master.vm.network :private_network, ip: CONTROLLER_IP
     master.vm.network :forwarded_port, guest: 22, host: 2022, id: "ssh"
+
     # Run at VM creation the K3s installation script in controller mode
     master.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["controller", CONTROLLER_IP]
     master.vm.provision "shell", privileged: false, path: "install_ssh_pubkey.sh"
+
+    # Run k3s deployment script
+    master.vm.provision "shell", privileged: true, path: "deploy_services.sh"
 
     # Copy ssh key before starting VMs
     master.trigger.before :up do |trigger|
