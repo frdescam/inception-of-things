@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
         bash -c "
           if [ ! -f ~/.ssh/id_ed25519.pub ] || [ ! -f ~/.ssh/id_ed25519 ]
           then
-            rm ~/.ssh/id_ed25519.pub ~/.ssh/id_ed25519
+            rm -f ~/.ssh/id_ed25519.pub ~/.ssh/id_ed25519
             ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ''
           fi
           cp ~/.ssh/id_ed25519.pub ./shared
