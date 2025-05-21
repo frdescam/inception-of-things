@@ -12,25 +12,36 @@
 #                                                                              #
 # **************************************************************************** #
 
-if [ "$1" = "controller" ]
+INSTALLATION_MODE="$1"
+INSTALLATION_IP="$2"
+CONTROLLER_IP="$3"
+
+if [ "$INSTALLATION_MODE" = "controller" ]
 then
-	echo "[provisioned script] Starting installation in controller mode ..."
-	curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--node-ip=192.168.56.110" sh -
-	echo "[provisioned script] Waiting for k3s to start ..."
+	echo "[k3s installation script] Starting installation in controller mode ..."
+	curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--node-ip=$INSTALLATION_IP" sh -
+
+	echo "[k3s installation script] Waiting for k3s to start ..."
 	while [ ! -f /var/lib/rancher/k3s/server/node-token ]
 	do
 		sleep 1
 	done
-	echo "[provisioned script] Copying node-token to shared folder ..."
+
+	echo "[k3s installation script] Copying node-token to shared folder ..."
 	cp /var/lib/rancher/k3s/server/node-token /vagrant/
-	echo "[provisioned script] Authorizating ssh key ..."
-	cat /vagrant/id_ed25519.pub >> /home/vagrant/.ssh/authorized_keys
+
 else
-	echo "[provisioned script] Starting installation in agent mode ..."
+	echo "[k3s installation script] Starting installation in agent mode ..."
 	curl -sfL https://get.k3s.io | \
-		K3S_TOKEN=$(cat /vagrant/node-token) K3S_URL=https://$2:6443 INSTALL_K3S_EXEC="--node-ip=192.168.56.111" sh -
-	echo "[provisioned script] Authorizating ssh key ..."
-	cat /vagrant/id_ed25519.pub >> /home/vagrant/.ssh/authorized_keys
-	echo "[provisioned script] Removing files from shared folder ..."
+		K3S_TOKEN="$(cat /vagrant/node-token)" \
+		K3S_URL="https://$CONTROLLER_IP:6443" \
+		INSTALL_K3S_EXEC="--node-ip=$INSTALLATION_IP" \
+		sh -
+
+	echo "[k3s installation script] Removing files from shared folder ..."
 	rm /vagrant/id_ed25519.pub /vagrant/node-token
 fi
+
+# This shouldn't be here, it has nothing to do with k3s installation
+echo "[k3s installation script] Authorizating ssh key ..."
+cat /vagrant/id_ed25519.pub >> /home/vagrant/.ssh/authorized_keys
