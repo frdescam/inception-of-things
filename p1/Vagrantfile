@@ -40,6 +40,7 @@ Vagrant.configure("2") do |config|
     master.vm.network :forwarded_port, guest: 22, host: 2022, id: "ssh"
     # Run at VM creation the K3s installation script in controller mode
     master.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["controller", CONTROLLER_IP]
+    master.vm.provision "shell", privileged: false, path: "install_ssh_pubkey.sh"
 
     # Copy ssh key before starting VMs
     master.trigger.before :up do |trigger|
@@ -63,5 +64,6 @@ Vagrant.configure("2") do |config|
     worker.vm.network :forwarded_port, guest: 22, host: 2023, id: "ssh"
     # Run at VM creation the K3s installation script in agent mode
     worker.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["agent", WORKER_IP, CONTROLLER_IP]
+    worker.vm.provision "shell", privileged: false, path: "install_ssh_pubkey.sh"
   end
 end
