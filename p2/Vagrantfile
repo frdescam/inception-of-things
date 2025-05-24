@@ -1,8 +1,8 @@
 # vi: set ft=ruby :
 
 CONTROLLER_IP = "192.168.56.110"
-
 CONTROLLER_HOSTNAME = "ltouretS"
+PROJECT_PATH = "~/inception-of-things/p2/"
 
 # Use vagrant v2
 Vagrant.configure("2") do |config|
@@ -14,8 +14,8 @@ Vagrant.configure("2") do |config|
     v.cpus = 1
   end
   # Setup shared folder between host and VMs
-  config.vm.synced_folder "./shared", "/vagrant"
-  config.vm.synced_folder "./services", "/services"
+  config.vm.synced_folder "#{PROJECT_PATH}shared", "/vagrant"
+  config.vm.synced_folder "#{PROJECT_PATH}services", "/services"
 
   # We insert our own ssh key so no need for theirs
   config.ssh.insert_key = false
@@ -27,11 +27,11 @@ Vagrant.configure("2") do |config|
     master.vm.network :forwarded_port, guest: 22, host: 2022, id: "ssh"
 
     # Run at VM creation the K3s installation script in controller mode
-    master.vm.provision "shell", privileged: true, path: "install_k3s.sh", args: ["controller", CONTROLLER_IP]
-    master.vm.provision "shell", privileged: false, path: "install_ssh_pubkey.sh"
+    master.vm.provision "shell", privileged: true, path: "#{PROJECT_PATH}install_k3s.sh", args: ["controller", CONTROLLER_IP]
+    master.vm.provision "shell", privileged: false, path: "#{PROJECT_PATH}install_ssh_pubkey.sh"
 
     # Run k3s deployment script
-    master.vm.provision "shell", privileged: true, path: "deploy_services.sh"
+    master.vm.provision "shell", privileged: true, path: "#{PROJECT_PATH}deploy_services.sh"
 
     # Copy ssh key before starting VMs
     master.trigger.before :up do |trigger|
@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
             rm -f ~/.ssh/id_ed25519.pub ~/.ssh/id_ed25519
             ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ''
           fi
-          cp ~/.ssh/id_ed25519.pub ./shared
+          cp ~/.ssh/id_ed25519.pub #{PROJECT_PATH}shared
         "
         SHELL
       }
