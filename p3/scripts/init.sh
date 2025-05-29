@@ -2,7 +2,6 @@
 
 CONF_FOLDER="/home/iot/inception-of-things/p3/scripts"
 
-sudo bash $CONF_FOLDER/install_dependencies.sh
 sudo bash $CONF_FOLDER/deploy_argocd.sh
 sudo bash $CONF_FOLDER/deploy_part3.sh
 
