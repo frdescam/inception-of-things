@@ -2,6 +2,12 @@
 
 SERVICES_FOLDER="/services"
 
+echo "[services deployment script] Building app1 image ..."
+docker build -t coffee_snake_custom $SERVICES_FOLDER/app1/
+
+echo "[services deployment script] importing docker image in k3s ..."
+docker save coffee_snake_custom | k3s ctr images import -
+
 for service in app1 app2 app3
 do
     echo "[services deployment script] Deploying $service..."

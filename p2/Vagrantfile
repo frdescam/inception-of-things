@@ -30,6 +30,7 @@ Vagrant.configure("2") do |config|
 
     # Run at VM creation the K3s installation script in controller mode
     master.vm.provision "shell", privileged: true, path: "#{SCRIPTS_PATH}install_k3s.sh", args: ["controller", CONTROLLER_IP]
+    master.vm.provision "shell", privileged: true, path: "#{SCRIPTS_PATH}install_docker.sh"
     master.vm.provision "shell", privileged: false, path: "#{SCRIPTS_PATH}install_ssh_pubkey.sh"
 
     # Run k3s deployment script
