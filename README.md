@@ -8,11 +8,16 @@ This is a project from 42 school, its goal was to let us learn the basics of clo
 - Kubernetes (K3s)
 - Continuous deployment (ArgoCD)
 
-But we chose to go way further than the mandatory part of the subject by doing the suggested bonuses:
+But we chose to go way further than the mandatory part of the subject by doing the suggested bonus:
 
 - Setting up a Gitlab instance on K3s as the source of IaC
+
+As well as our own bonuses:
+
+- Implementing https and http to https redirection (p2)
+- Building docker image from Dockerfile locally (p2)
 - Building our own continuous integration
-- Publishing our own images to local Gitlab registry
+- Publishing our own images to local Gitlab registry for usage in ArgoCD
 
 Leading us to a full in house cloud solution.
 
