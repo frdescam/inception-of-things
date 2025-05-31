@@ -6,7 +6,7 @@ metadata:
 spec:
   project: "inception-of-things"
   source:
-    repoURL: https://github.com/ltouret/iot-part-3-config
+    repoURL: https://github.com/ltouret/ltouret-iot-part-3-config
     targetRevision: HEAD
     path: "manifests"
   destination:
