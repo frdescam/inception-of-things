@@ -6,7 +6,7 @@ metadata:
 spec:
   project: "inception-of-things"
   source:
-    repoURL: https://github.com/ltouret/iot-part-3-config
+    repoURL: "http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/root/ltouret-argocd.git"
     targetRevision: HEAD
     path: "manifests"
   destination:

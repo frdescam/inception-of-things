@@ -6,7 +6,7 @@ metadata:
 spec:
   description: "part 3"
   sourceRepos:
-    - "https://github.com/ltouret/*"
+    - "http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/root/*"
   destinations:
     - namespace: dev
       server: "https://kubernetes.default.svc"

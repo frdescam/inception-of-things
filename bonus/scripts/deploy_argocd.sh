@@ -1,9 +1,5 @@
 #!/bin/bash
 
-echo "Creating cluster"
-k3d cluster delete dev-cluster
-k3d cluster create dev-cluster --port "8888:80@loadbalancer"
-
 echo "Creating argocd namespace and installing argocd"
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
