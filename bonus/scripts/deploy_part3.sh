@@ -9,6 +9,6 @@ kubectl apply -f $CONF_FOLDER/part3-argocd.yaml
 
 echo "Waiting for part3 service to be ready..."
 sleep 10
-until kubectl get pods -n dev | grep part3 | grep -q '1/1'; do
+until kubectl get pods -n dev 2> /dev/null | grep part3 | grep -q '1/1'; do
   sleep 5
 done
