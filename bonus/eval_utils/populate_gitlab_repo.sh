@@ -2,13 +2,23 @@
 
 CLONE_REPO_URL="https://github.com/ltouret/ltouret-iot-part-3-config.git"
 LOCAL_REPO_DIR=$(mktemp -d)
-# delete after?
 
 NEW_REMOTE_NAME="gitlab-remote"
 NEW_REMOTE_URL="git@gitlab.iot.local:root/ltouret-argocd.git"
 
 BRANCH_TO_PUSH="main"
 
+echo "Add this ssh key to gitlab.."
+ssh-keygen -t ed25519 -C "bestvmever@iot.local"
+cat ~/.ssh/id_ed25519.pub
+
+read -p "Type 'y' and enter to proceed: " confirmation
+
+if [ "$confirmation" != "y" ]
+then
+	echo "Operation cancelled. Try again!"
+	exit 11
+fi
 echo "Starting Git operations..."
 
 git clone "$CLONE_REPO_URL" "$LOCAL_REPO_DIR"
