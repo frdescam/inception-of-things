@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CLONE_REPO_URL="git@github.com:ltouret/ltouret-iot-part-3-config.git"
+CLONE_REPO_URL="https://github.com/ltouret/ltouret-iot-part-3-config.git"
 LOCAL_REPO_DIR=$(mktemp -d)
 # delete after?
 
